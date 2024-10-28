@@ -1,0 +1,40 @@
+#include <stdio.h>
+void bitStuffing(int N, int arr[]) {
+    int brr[30]; // Array to store the stuffed bits
+    int i = 0, j = 0, k, count;
+ while (i < N) {
+        if (arr[i] == 1) {
+            count = 1;
+            brr[j] = arr[i];
+            for (k = i + 1; k < N && arr[k] == 1 && count < 5; k++) {
+                j++;
+                brr[j] = arr[k];
+                count++;
+            }
+            if (count == 5) {
+                j++;
+                brr[j] = 0; // Insert a '0' after five consecutive '1's
+            }
+            i = k;
+        } else {
+            brr[j] = arr[i];
+            i++;
+            j++;
+        }
+    }
+
+    printf("After Bit Stuffing: ");
+    for (i = 0; i < j; i++) {
+        printf("%d", brr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int N = 12;
+    int arr[] = {1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1};
+
+    bitStuffing(N, arr);
+
+    return 0;
+}
