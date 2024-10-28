@@ -1,0 +1,36 @@
+import pandas as pd
+ data = pd.read_csv('C://Users//rohit//Downloads//enjoysport.csv')
+ print("The total number of training instances are:", len(data), '\n', 
+data)
+ num_attribute = len(data.columns) - 1
+ hypothesis = ['0'] * num_attribute
+ print("The Initial Hypothesis is ",hypothesis)
+ for i in range(len(data)):
+    if data.iloc[i, num_attribute] == 'yes':
+        for j in range(num_attribute):
+            if hypothesis[j] == '0' or hypothesis[j] == data.iloc[i, 
+j]:
+                hypothesis[j] = data.iloc[i, j]
+            else:
+                hypothesis[j] = '?'
+    print("\nThe hypothesis for the training instance {} is : \
+ n".format(i), hypothesis)
+ print("\nThe Maximally specific hypothesis for the training instances 
+is ", hypothesis)
+ The total number of training instances are: 4 
+      sky airtemp humidity    wind water forcast enjoysport
+ 0  sunny    warm   normal  strong  warm    same        yes
+ 1  sunny    warm     high  strong  warm    same        yes
+ 2  rainy    cold     high  strong  warm  change         no
+ 3  sunny    warm     high  strong  cool  change        yes
+ The Initial Hypothesis is  ['0', '0', '0', '0', '0', '0']
+ The hypothesis for the training instance 0 is : 
+ ['sunny', 'warm', 'normal', 'strong', 'warm', 'same']
+ The hypothesis for the training instance 1 is : 
+ ['sunny', 'warm', '?', 'strong', 'warm', 'same']
+ The hypothesis for the training instance 2 is : 
+ ['sunny', 'warm', '?', 'strong', 'warm', 'same']
+ The hypothesis for the training instance 3 is : 
+ ['sunny', 'warm', '?', 'strong', '?', '?']
+ The Maximally specific hypothesis for the training instances is  
+['sunny', 'warm', '?', 'strong', '?', '?']
