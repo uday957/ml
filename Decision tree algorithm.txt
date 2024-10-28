@@ -1,0 +1,64 @@
+ import pandas as pd
+ import numpy as np
+ class DecisionTreeID3:
+    def fit(self, X, y):
+        self.tree = self._build_tree(X, y)
+    def _build_tree(self, X, y):
+        if len(set(y)) == 1:
+            return y.iloc[0]  
+        if X.empty:
+            return y.mode()[0]  # Return the most common label if no 
+features left
+        best_feature = self._best_feature(X, y)
+        tree = {best_feature: {}}
+        for value in X[best_feature].unique():
+            sub_X = X[X[best_feature] == 
+value].drop(columns=[best_feature])
+            sub_y = y[X[best_feature] == value]
+            tree[best_feature][value] = self._build_tree(sub_X, sub_y)
+        return tree
+    def _best_feature(self, X, y):
+        base_entropy = self._entropy(y)
+        return max(X.columns, key=lambda feature: base_entropy - 
+self._entropy_given_feature(X[feature], y))
+    def _entropy(self, y):
+        probabilities = y.value_counts(normalize=True)
+        return -sum(probabilities * np.log2(probabilities + 1e-9))
+    def _entropy_given_feature(self, feature, y):
+        return sum((len(sub_y) / len(y)) * self._entropy(sub_y)
+                   for value in feature.unique() 
+                   for sub_y in [y[feature == value]])
+    def predict(self, X):
+        return X.apply(self._predict_instance, axis=1)
+    def _predict_instance(self, row):
+        node = self.tree
+        while isinstance(node, dict):
+            feature = next(iter(node))
+            node = node[feature].get(row[feature], None)
+            if node is None:
+                return None
+        return node
+ if __name__ == "__main__":
+    df = pd.read_csv("C://Users//rohit//Downloads//Tennis.csv")
+    X = df.drop(columns=['Play'])
+    y = df['Play']
+    model = DecisionTreeID3()
+    model.fit(X, y)
+    print("Decision Tree Structure:")
+    print(model.tree)
+    test_data = pd.DataFrame({
+        "Outlook": ["Sunny", "Overcast", "Rain"],
+        "Temperature": ["Hot", "Mild", "Cool"],
+        "Humidity": ["Normal", "Normal", "High"],
+        "Wind": ["Weak", "Strong", "Strong"]
+    })
+    predictions = model.predict(test_data)
+    print("\nPredictions:")
+    print(predictions.tolist())
+
+
+ Decision Tree Structure:
+ {'Outlook': {'Sunny': {'Humidity': {'High': 'No', 'Normal': 'Yes'}}, 
+'Overcast': 'Yes', 'Rain': {'Wind': {'Weak': 'Yes', 'Strong': 'No'}}}}
+ Predictions:
+ ['Yes', 'Yes', 'No']

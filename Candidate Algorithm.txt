@@ -1,0 +1,29 @@
+import pandas as pd
+ import numpy as np
+ data = pd.read_csv('C://Users//rohit//Downloads//enjoysport.csv')
+ concepts = data.iloc[:, :-1].values  # Features
+ target = data.iloc[:, -1].values       # Target variable
+ def candidate_elimination(concepts, target):
+    specific_h = concepts[0].copy()  # Initialize specific hypothesis
+    general_h = [["?" for _ in range(len(specific_h))] for _ in 
+range(len(specific_h))] 
+    for i, h in enumerate(concepts):
+        if target[i] == "yes":  
+            for x in range(len(specific_h)):
+                if h[x] != specific_h[x]:
+                    specific_h[x] = '?'  # Generalize specific 
+hypothesis
+                    general_h[x][x] = '?'  # Update general hypothesis
+        else:  
+            for x in range(len(specific_h)):
+                if h[x] != specific_h[x]:
+                    general_h[x][x] = specific_h[x] 
+    general_h = [g for g in general_h if g != ['?' for _ in 
+range(len(specific_h))]]
+    return specific_h, general_h
+ s_final, g_final = candidate_elimination(concepts, target)
+ print("\nFinal Specific Hypothesis:", s_final)
+ print("Final General Hypothesis:", g_final)
+ Final Specific Hypothesis: ['sunny' 'warm' '?' 'strong' '?' '?']
+ Final General Hypothesis: [['sunny', '?', '?', '?', '?', '?'], ['?', 
+'warm', '?', '?', '?', '?']]
